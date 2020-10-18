@@ -6,8 +6,10 @@ import tkinter
 import argparse
 import copy
 import pdb
-from getkey import getkey
+#from getkey import getkey
+import keyboard
 from enum import Enum
+import time as t
 
 MOVES = {'q': (-1, -1), 'w': (0, -1), 'e': (1,-1), 'a':(-1,0),
     'd': (1, 0), 'z': (-1, 1),'x': (0,1),'c': (1,1), 's': (0,0)}
@@ -217,6 +219,7 @@ def move(state, xv, yv, time, window_width, window_height, args, renderer):
     state.ship.yv = yv
 
     for i in range(time):
+        t.sleep(.03)
         for a in state.asteroids:
             a.y += a.v
             if a.y + a.s/2 > window_height:
@@ -250,18 +253,21 @@ def main():
     for i, rec in moves.iterrows():
         if args["visual"]:
             render(view,state)
-            key = getkey()
+            #key = getkey()
+            keyboard.wait("Space")
         vx, vy = MOVES[rec['direction']]
         state = move(state, vx, vy, rec['time'], window_width, window_height, args, lambda x: render(view, x))
         if state.goal != Goal.OK:
             break
     if args["visual"]:
         render(view,state)
-        key = getkey()
-
+        #key = getkey()
+        keyboard.wait("Space")
+        tk.mainloop()
     else:
         print(state.goal)
         print("Fuel left: %d" % state.ship.fuel)
+
 
 if __name__ == '__main__':
     main()
