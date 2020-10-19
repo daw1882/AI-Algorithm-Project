@@ -12,8 +12,8 @@ import heapq
 
 class Agent:
 
-    def __init__(self):
-        self.args = asteroids_exp.parse_args()
+    def __init__(self, args):
+        self.args = asteroids_exp.parse_args(args)
         self.args['visual'] = True
         self.state, self.window_width, self.window_height  = asteroids_exp.init_asteroid_model(self.args)
         self.view = None
@@ -70,7 +70,10 @@ class Search_Agent(Agent):
                     fuel_cost = 1
                 
                 to_end = outer.window_width - self.path_cost
-                for time in range(50,10, -1):
+                lower = 10
+                if outer.window_width < 20:
+                    lower = 1
+                for time in range(50,lower, -1):
                     if action in ('d', 'e', 'c'):
                         move_cost = time
                     state = outer.act(self.state,action,time)
@@ -96,7 +99,7 @@ class Search_Agent(Agent):
                 current = strategy.next()[1]
                 if current.state.goal == asteroids_exp.Goal.SUCCESS:
                     path = self.retrieve_path(current)
-                    print ("success!")
+                    #print ("success!")
                     return path
                 if current.state.goal == asteroids_exp.Goal.OK:
                     leaves = current.expand(self)
@@ -106,13 +109,14 @@ class Search_Agent(Agent):
             return []
 
 
-heuristic = Search_Agent()
-start_time = time.time()
-path = heuristic.run()
-end_time = time.time()
-df = pd.DataFrame(path, columns=['direction','time'])
-df.to_csv((".").join([heuristic.args['in'].split(".")[0],"csv"]),index = False)
-print(end_time-start_time)
+if __name__ == "__main__":
+    heuristic = Search_Agent(None)
+    start_time = time.time()
+    path = heuristic.run()
+    end_time = time.time()
+    df = pd.DataFrame(path, columns=['direction','time'])
+    df.to_csv((".").join([heuristic.args['in'].split(".")[0],"csv"]),index = False)
+    print(end_time-start_time)
 
 
 

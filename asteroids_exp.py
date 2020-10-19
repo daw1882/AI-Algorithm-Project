@@ -10,6 +10,8 @@ import pdb
 import keyboard
 from enum import Enum
 import time as t
+import sys
+import numpy as np
 
 MOVES = {'q': (-1, -1), 'w': (0, -1), 'e': (1,-1), 'a':(-1,0),
     'd': (1, 0), 'z': (-1, 1),'x': (0,1),'c': (1,1), 's': (0,0)}
@@ -95,11 +97,10 @@ def create_canvas(window):
     canvas.pack(fill="both", expand=True)
     return canvas
 
-def parse_args():
+def parse_args(args):
     """Parse all command line arguments."""
 
     ap = argparse.ArgumentParser()
-
     # Add the arguments to the parser
     ap.add_argument("-i", "--in", required=True,
        help="Name of input file")
@@ -107,8 +108,13 @@ def parse_args():
        help="Name of move file")
     ap.add_argument("-v", "--visual", action='store_true', 
         help="visualize") # this is what a flag argument looks like
-    args = vars(ap.parse_args())
-    return args
+    if args is not None:
+        args = args.split()
+        args = vars(ap.parse_args(args))
+        return args
+    else:
+        args = vars(ap.parse_args())
+        return args
 
 def read_spec(filename):
     """Read the specifications for the asteroid game here"""
@@ -219,7 +225,7 @@ def move(state, xv, yv, time, window_width, window_height, args, renderer):
     state.ship.yv = yv
 
     for i in range(time):
-        t.sleep(.03)
+        #t.sleep(.03)
         for a in state.asteroids:
             a.y += a.v
             if a.y + a.s/2 > window_height:
@@ -231,7 +237,7 @@ def move(state, xv, yv, time, window_width, window_height, args, renderer):
         if collision(state,window_height):
             state.goal = Goal.FAIL
             state.num_collisions += 1
-        if state.ship.x >= window_width:
+        if state.ship.x >= window_width and state.goal != Goal.FAIL:
             state.goal = Goal.SUCCESS
             if args["visual"]:
                 renderer(state)
@@ -242,8 +248,27 @@ def move(state, xv, yv, time, window_width, window_height, args, renderer):
     #state.goal = Goal.OK
     return state
 
+def check_soln(moves, args):
+    env_state, window_width, window_height = init_asteroid_model(args)
+    game_time = 0
+    for act in moves:
+        direction = act[0]
+        xv, yv = MOVES[direction]
+        env_state = move(env_state, xv, yv, act[1], window_width, window_height, args, lambda x: render(None, x))
+        if env_state.goal == Goal.FAIL:
+            print("failure")
+            return np.nan, np.nan
+        if env_state.goal == Goal.SUCCESS:
+            game_time += act[1]
+            print("success")
+            return game_time, env_state.ship.fuel
+        game_time += act[1]
+    print("failure")
+    return np.nan, np.nan
+
+
 def main():
-    args = parse_args()
+    args = parse_args(None)
 
     initial_state, window_width, window_height  = init_asteroid_model(args)
     view = init_asteroid_view(initial_state, window_width, window_height)

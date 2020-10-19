@@ -20,7 +20,7 @@ import pdb
 
 class SA_Agent():
 
-    def __init__(self):
+    def __init__(self, args):
         """
         Initialize environment and intial solution
 
@@ -29,7 +29,7 @@ class SA_Agent():
         None.
 
         """
-        self.args = asteroids_exp.parse_args()
+        self.args = asteroids_exp.parse_args(args)
         self.args['visual'] = True
         self.env_state, self.window_width, self.window_height  = asteroids_exp.init_asteroid_model(self.args)
         self.view = None
@@ -134,8 +134,8 @@ class SA_Agent():
                 remove_idx = random.randrange(1, len(new_state))
                 new_state.pop(remove_idx)
             else:
-                move_types = ['s','d','e','c']
-                make_move = move_types[random.randrange(4)]
+                move_types = ['s','d','e','c','x']
+                make_move = move_types[random.randrange(5)]
                 time_block = random.randrange(1, outer.window_width)
                 start_idx = random.randint(1, len(new_state)+1)
                 new_state.insert(start_idx, (make_move, time_block))
@@ -164,7 +164,7 @@ class SA_Agent():
         """
         if time > 5000:
             return 0
-        return 1/time
+        return 1/(time*.005)
     
 
 
@@ -188,7 +188,7 @@ class SA_Agent():
             temp = self.schedule(i)
             if temp == 0:
                 self.solution = current.state
-                return current
+                return current.state
             next = current.get_successor(current.state, self)
             performance = next.perf_val - current.perf_val
             if performance > 0:
@@ -199,7 +199,6 @@ class SA_Agent():
                 if decision <= probability:
                     current = next
             i += 1
-            
             
     def check_sol(self):
         """
@@ -224,17 +223,17 @@ class SA_Agent():
                 return
         
             
-
-a = SA_Agent()
-
-# run the algorithm, print the time it took
-start = t.time()
-a.run()
-end = t.time()
-#print(a.solution) # Uncomment for solution list to print
-print("Time to Solution:", end-start)
-a.check_sol()
-
-# a.solution is a list of ordered pairs of (direction, steps)
-df = pd.DataFrame(a.solution, columns=['direction','time'])
-df.to_csv((".").join([a.args['in'].split(".")[0],"csv"]),index = False)
+if __name__ == "__main__":
+    a = SA_Agent(None)
+    
+    # run the algorithm, print the time it took
+    start = t.time()
+    a.run()
+    end = t.time()
+    #print(a.solution) # Uncomment for solution list to print
+    print("Time to Solution:", end-start)
+    a.check_sol()
+    
+    # a.solution is a list of ordered pairs of (direction, steps)
+    df = pd.DataFrame(a.solution, columns=['direction','time'])
+    df.to_csv((".").join([a.args['in'].split(".")[0],"csv"]),index = False)

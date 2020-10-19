@@ -12,11 +12,19 @@ import asteroids_exp
 import pdb
 import operator
 
+POPSIZE = 10
+ITERATIONS = 750
+NUM_MOVES = 20
+MUTATE_NUM = 7
+#TIME_BOUND = window_width
+
+
 
 class Chromosome(object):
         
     def __init__(self, moves, outer):
-        self.num_moves = 15
+        self.outer = outer
+        self.num_moves = NUM_MOVES
         self.moves = moves
         self.fitness = self.score_fitness(outer)
         
@@ -25,17 +33,14 @@ class Chromosome(object):
     def get_move(self, key):
         """
         Get the tuple of move values for a given key
-
         Parameters
         ----------
         key : char
             Character that was pressed to mvoe.
-
         Returns
         -------
         TYPE
             Tuple of integers.
-
         """
         return asteroids_exp.MOVES[key]
     
@@ -50,17 +55,22 @@ class Chromosome(object):
             direction = move[0]
             xv, yv = self.get_move(direction)
             env = asteroids_exp.move(env, xv, yv, move[1], outer.window_width, outer.window_height, outer.args, lambda x: asteroids_exp.render(outer.view, x))
-            if env.num_collisions > 0:
-                return env.ship.fuel + how_far
+            if env.goal == asteroids_exp.Goal.FAIL:
+                #print("fail")
+                return how_far #env.ship.fuel + 
+            elif env.ship.x > outer.window_width and env.goal == asteroids_exp.Goal.SUCCESS:
+                return  outer.window_width+1001 #env.ship.fuel*20 +
             else:
-                how_far += env.ship.x
-        return env.ship.fuel + how_far
+                #print("ok")
+                how_far = env.ship.x
+            #print(env.ship.fuel)
+        return how_far*10 #env.ship.fuel*10 + 
 
     # Mutate function params:(child) <- mutate child if random probability
     # DO LAST
     def mutate(self):
-        for i in range(20):
-            time = random.randint(1, 100)
+        for i in range(MUTATE_NUM):
+            time = random.randint(1, int(self.outer.window_width/2))
             move_types = ['s','d','e','c']
             move_type = move_types[random.randrange(4)]
             idx = random.randint(0, self.num_moves-1)
@@ -77,16 +87,14 @@ class Chromosome(object):
 
 class GA_Agent():
 
-    def __init__(self):
+    def __init__(self, args):
         """
         Initialize environment
-
         Returns
         -------
         None.
-
         """
-        self.args = asteroids_exp.parse_args()
+        self.args = asteroids_exp.parse_args(args)
         self.args['visual'] = True
         self.env_state, self.window_width, self.window_height  = asteroids_exp.init_asteroid_model(self.args)
         self.view = None
@@ -94,11 +102,9 @@ class GA_Agent():
     def init_env_state(self):
         """
         Re-initialize the environment to reset items like the fuel used
-
         Returns
         -------
         None.
-
         """
         self.env_state, self.window_width, self.window_height  = asteroids_exp.init_asteroid_model(self.args)
         return self.env_state
@@ -109,8 +115,8 @@ class GA_Agent():
         
     def init_moves(self):
         moves = []
-        for i in range(15):
-            time = random.randint(1, self.window_width)
+        for i in range(NUM_MOVES):
+            time = random.randint(1, int(self.window_width/2))
             move_types = ['s','d','e','c']
             move_type = move_types[random.randrange(4)]
             moves.append((move_type, time))
@@ -120,7 +126,7 @@ class GA_Agent():
     # initialize the first population
     def init_pop(self):
         population = []
-        for i in range(100):
+        for i in range(POPSIZE):
             moves = self.init_moves()
             population.append(Chromosome(moves, self))
         return population
@@ -136,6 +142,7 @@ class GA_Agent():
         total_fit = 0.0
         for chromosome in population:
             total_fit += chromosome.fitness
+        #print(total_fit)
         probs = [0]
         for i in range(len(population)):
             probs.append(population[i].fitness/total_fit + probs[i])
@@ -153,7 +160,7 @@ class GA_Agent():
         pop = self.init_pop()
         
         i = 0
-        while(i < 100):
+        while(i < ITERATIONS):
             new_pop = []
             for j in range(len(pop)):
                 x = self.rand_select(pop)
@@ -163,9 +170,10 @@ class GA_Agent():
                     child = child.mutate()
                 new_pop.append(child)
             pop = new_pop
-            print(len(pop), i)
+            #print(len(pop), i)
             i += 1
         # change this to best from population
+        #print(self.find_fittest(pop).fitness)
         return self.find_fittest(pop).moves
 
 
@@ -177,11 +185,12 @@ class GA_Agent():
     
     # 2) Have list of moves (direction, time) and slice the list like a string
     #    to generate new ones. length of list will be 100
-
-genetic = GA_Agent()
-path = genetic.run()
-#print(path)
-df = pd.DataFrame(path, columns=['direction','time'])
-df.to_csv((".").join([genetic.args['in'].split(".")[0],"csv"]),index = False)
-
+if __name__ == "__main__":
+    genetic = GA_Agent(None)
+    path = genetic.run()
+    #print(genetic.window_width)
+    #print(path)
+    df = pd.DataFrame(path, columns=['direction','time'])
+    df.to_csv((".").join([genetic.args['in'].split(".")[0],"csv"]),index = False)
+    
 
