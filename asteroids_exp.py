@@ -256,14 +256,14 @@ def check_soln(moves, args):
         xv, yv = MOVES[direction]
         env_state = move(env_state, xv, yv, act[1], window_width, window_height, args, lambda x: render(None, x))
         if env_state.goal == Goal.FAIL:
-            print("failure")
+            #print("failure")
             return np.nan, np.nan
         if env_state.goal == Goal.SUCCESS:
             game_time += act[1]
-            print("success")
+            #print("success")
             return game_time, env_state.ship.fuel
         game_time += act[1]
-    print("failure")
+    #print("failure")
     return np.nan, np.nan
 
 

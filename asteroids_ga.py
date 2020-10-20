@@ -23,6 +23,21 @@ MUTATE_NUM = 7
 class Chromosome(object):
         
     def __init__(self, moves, outer):
+        """
+        Initialize a chromosome
+
+        Parameters
+        ----------
+        moves : List
+            all the moves to make for this chromosome.
+        outer : GA_Agent
+            GA_Agent to access info from.
+
+        Returns
+        -------
+        None.
+
+        """
         self.outer = outer
         self.num_moves = NUM_MOVES
         self.moves = moves
@@ -49,6 +64,19 @@ class Chromosome(object):
     # possibly: how far state gets across board with 0 collisions + fuel left 
     # at the end
     def score_fitness(self, outer):
+        """
+        Give a fitness score for the Chromosome
+
+        Parameters
+        ----------
+        outer : GA_Agent
+
+        Returns
+        -------
+        integer
+            Fitness score for the Chromosome.
+
+        """
         env = outer.init_env_state()
         how_far = 0
         for move in self.moves:
@@ -69,6 +97,15 @@ class Chromosome(object):
     # Mutate function params:(child) <- mutate child if random probability
     # DO LAST
     def mutate(self):
+        """
+        Change a Chromosome slightly to alter the population.
+
+        Returns
+        -------
+        Chromosome
+            Modified chromosome.
+
+        """
         for i in range(MUTATE_NUM):
             time = random.randint(1, int(self.outer.window_width/2))
             move_types = ['s','d','e','c']
@@ -81,6 +118,22 @@ class Chromosome(object):
     # Reproduce function params(parent1, parent2) <- taken from pop
     # by random selection
     def reproduce(self, mate, outer):
+        """
+        Generate an offspring for the new population
+
+        Parameters
+        ----------
+        mate : Chromosome
+            second Chromosome to reproduce with.
+        outer : GA_Agent
+            Agent to get info from for the environment.
+
+        Returns
+        -------
+        Chromosome
+            Child of the two Chromosome's given.
+
+        """
         cutoff = random.randint(1, self.num_moves-1)
         moves = self.moves[:cutoff] + mate.moves[cutoff:]
         return Chromosome(moves, outer)
@@ -114,6 +167,15 @@ class GA_Agent():
     
         
     def init_moves(self):
+        """
+        Create an initial set of moves for a population member.
+
+        Returns
+        -------
+        moves : List
+            List of moves to make to try and reach goal.
+
+        """
         moves = []
         for i in range(NUM_MOVES):
             time = random.randint(1, int(self.window_width/2))
@@ -125,6 +187,15 @@ class GA_Agent():
         
     # initialize the first population
     def init_pop(self):
+        """
+        Generate's initial population'
+
+        Returns
+        -------
+        population : List
+            list of Chromosomes.
+
+        """
         population = []
         for i in range(POPSIZE):
             moves = self.init_moves()
@@ -132,6 +203,20 @@ class GA_Agent():
         return population
     
     def find_fittest(self, pop):
+        """
+        Search the population for the highest scoring (fittest) member
+
+        Parameters
+        ----------
+        pop : List
+            list of Chromosomes.
+
+        Returns
+        -------
+        Chromosome
+            The fittest member of the pop.
+
+        """
         #print(pop)
         sort_pop = sorted(pop, key=operator.attrgetter('fitness'), reverse=True)
         return sort_pop[0]
@@ -139,7 +224,21 @@ class GA_Agent():
     # Random Selection function params:(population, fitness func)
     # probability for each state is percentage of total sum of fitness scores
     def rand_select(self, population):
-        total_fit = 0.0
+        """
+        Select member of population to reproduce based of probability.
+
+        Parameters
+        ----------
+        population : List
+            List of pop members.
+
+        Returns
+        -------
+        Chromosome
+            Chromosome chosen for reproduction.
+
+        """
+        total_fit = 1
         for chromosome in population:
             total_fit += chromosome.fitness
         #print(total_fit)
@@ -150,13 +249,23 @@ class GA_Agent():
             
         selection = random.random()
         for i in range(len(probs)):
-            if selection <= probs[i]:
+            if selection <= probs[i] or i == len(probs)-1:
                 return population[i]
     
     # run GA on a pop params(population, fitness func)
         # follow algo in book for steps
         
     def run(self):
+        """
+        Runs the entire Genetic Algorithm
+
+        Returns
+        -------
+        List
+            The best list of moves to make that the algorithm found in 
+            given time.
+
+        """
         pop = self.init_pop()
         
         i = 0
@@ -172,24 +281,13 @@ class GA_Agent():
             pop = new_pop
             #print(len(pop), i)
             i += 1
-        # change this to best from population
         #print(self.find_fittest(pop).fitness)
         return self.find_fittest(pop).moves
 
 
-
-# How to represent population:
-    # 1) have a long string of moves, each move repping a single unit of time
-    #    and slice between to create new ones (alternatively, have string of
-    #    moves with time in 3 digits after it, harder to do)
-    
-    # 2) Have list of moves (direction, time) and slice the list like a string
-    #    to generate new ones. length of list will be 100
 if __name__ == "__main__":
     genetic = GA_Agent(None)
     path = genetic.run()
-    #print(genetic.window_width)
-    #print(path)
     df = pd.DataFrame(path, columns=['direction','time'])
     df.to_csv((".").join([genetic.args['in'].split(".")[0],"csv"]),index = False)
     
