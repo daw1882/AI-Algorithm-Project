@@ -6,7 +6,7 @@ Dade Wood, daw1882
 Usage: ```python asteroid_ga[#].py -i asteroid_game_11.json```
 
 ### Modifications to base algo:
-Fitness Function (main difference):
+Fitness Function (Higher is better):
 1. For move in chromosome's move list:
     1. act on the move in the environment
     1. if env goal state is FAIL, return the ships current x location
@@ -44,7 +44,24 @@ overly complex to implement for a single case.
 Usage: ```python asteroid_sa[#].py -i asteroid_game_11.json```
 
 ### Modifications to base algo:
+Scoring Function (Higher is better):
+1. For move in node's move list:
+    1. act on the move in the environment
+    1. if env goal state is FAIL, return the ships current x location
+    1. else if the ship has reached the goal (goal state is SUCCESS), return window_width + fuel_remaining + large_constant - len(move_list)
+    1. else update how far the ship is from its x location
+1. return ship_x_loc + fuel_remaining - len(move_list)
 
+Get Successor:
+1. randomly determine to add or remove a move from the current move list
+    1. if remove chosen and len(move_list) greater than 2,
+            then remove a randomly chosen index
+    1. else if add is chosen then randomly pick a move to add and add it in a random location
+1. return updated state
+
+The length of the move list had to be considered in the scoring function specifically because of how get_successor works. Since it can theoretically just continue to add more and more moves, often being useless if they are past the point of the goal, then we can have an unnecessarily huge move list that increases the time it takes to simulate the solution.
+
+The solution is representated as a list of move tuples with the letter for the move and the amount of time it takes such action.
 
 ### Difficulties:
 Simulated Annealing had the exact same problems when it game to games 7 and 24 for its cost function. The two functions are fairly similar so they have the 
