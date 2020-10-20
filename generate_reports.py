@@ -33,18 +33,18 @@ def get_ga_stats():
     ga_sys_time = []
     for i in range(25):
         print("Game #" + str(i) + ": ", end='')
-        for j in range(5):
+        #for j in range(5):
             
-            GA = asteroids_ga.GA_Agent(line_args.format(i))
-            start = time.time()
-            GA_path = GA.run()
-            end = time.time()
+        GA = asteroids_ga.GA_Agent(line_args.format(i))
+        start = time.time()
+        GA_path = GA.run()
+        end = time.time()
+        
+        args = asteroids_exp.parse_args(line_args.format(i))
+        game_time, fuel_left = asteroids_exp.check_soln(GA_path, args)
             
-            args = asteroids_exp.parse_args(line_args.format(i))
-            game_time, fuel_left = asteroids_exp.check_soln(GA_path, args)
-            
-            if not np.isnan(fuel_left) or i == 9:
-                break
+            # if not np.isnan(fuel_left) or i == 9:
+            #     break
         if not np.isnan(fuel_left):
             print("success")
         else:
@@ -76,19 +76,18 @@ def get_sa_stats():
     sa_sys_time = []
     for i in range(25):
         print("Game #" + str(i) + ": ", end='')
-        for j in range(5):
+        #for j in range(5):
             
-            SA = asteroids_sa.SA_Agent(line_args.format(i))
-            start = time.time()
-            SA_path = SA.run()
-            #print(SA_path)
-            end = time.time()
+        SA = asteroids_sa.SA_Agent(line_args.format(i))
+        start = time.time()
+        SA_path = SA.run()
+        end = time.time()
+        
+        args = asteroids_exp.parse_args(line_args.format(i))
+        game_time, fuel_left = asteroids_exp.check_soln(SA_path, args)
             
-            args = asteroids_exp.parse_args(line_args.format(i))
-            game_time, fuel_left = asteroids_exp.check_soln(SA_path, args)
-            
-            if not np.isnan(fuel_left) or i == 9:
-                break
+            # if not np.isnan(fuel_left) or i == 9:
+            #     break
         if not np.isnan(fuel_left):
             print("success")
         else:
@@ -121,17 +120,17 @@ def get_tree_stats():
     tree_sys_time = []
     for i in range(25):
         print("Game #" + str(i) + ": ", end='')
-        for j in range(5):
-            tree = asteroids_tree.Search_Agent(line_args.format(i))
-            start = time.time()
-            tree_path = tree.run()
-            end = time.time()
+        #for j in range(5):
+        tree = asteroids_tree.Search_Agent(line_args.format(i))
+        start = time.time()
+        tree_path = tree.run()
+        end = time.time()
+        
+        args = asteroids_exp.parse_args(line_args.format(i))
+        game_time, fuel_left = asteroids_exp.check_soln(tree_path, args)
             
-            args = asteroids_exp.parse_args(line_args.format(i))
-            game_time, fuel_left = asteroids_exp.check_soln(tree_path, args)
-            
-            if not np.isnan(fuel_left) or i == 9:
-                break
+            # if not np.isnan(fuel_left) or i == 9:
+            #     break
         if not np.isnan(fuel_left):
             print("success")
         else:
@@ -282,7 +281,6 @@ def create_tbl_img(file, output, title):
 
     """
     df = pd.read_csv(file, delimiter=',')
-    #print(df)
     fig = plt.figure()
     cell_text = []
     for row in range(len(df)):
@@ -316,7 +314,6 @@ def create_bar(file, output, title, y_label):
     """
     df = pd.read_csv(file, delimiter=',')
     plt.plot()
-    #print(df)
 
     x = df['Game #']
     plt.xticks(x)
@@ -353,9 +350,9 @@ def simple_data():
 
 
 if __name__ == "__main__":
-    #one_iteration()
+    one_iteration()
     # Uncomment to regenerate the tables
-    simple_data()
+    #simple_data()
     
 
 
