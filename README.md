@@ -72,7 +72,7 @@ Simulated Annealing had the exact same problems when it game to games 7 and 24 f
 same issues for examples such as these.
 
 **\*It should be noted that while game 7 and 24 do fail often for these two algorithms, they do not fail everytime. It is possible for the algorithm to find a solution 
-for both but it just depends on the randomization aspect being in its favor.**
+for both but it just depends on the randomization aspect being in its favor. Also, these problems do appear in other games (such as game 8, 18, and 20) but does not lead to a failure to find a solution nearly as often as 7 and 24.**
 
 ### Results:
 The results for simulated annealing are quite similar to the genetic algorithm. It slightly outperforms the GA in fuel remaining and slightly underperforms in the time steps to solution. The main reason these two algorithms are so similar is that the idea behind them is related, start with some random sample and improve upon it, mixing in random moves every now and then. 
