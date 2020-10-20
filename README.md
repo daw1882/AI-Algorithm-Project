@@ -115,6 +115,8 @@ Usage: ```python generate_reports.py```
 
 *Note: you also need to uncomment the line at the bottom if you want to generate the tables.
 
+***nan values mean that no solution was found for the algorithm, in bar graphs they are represented as 0's. Game 9 has no possible solution.**
+
 ### Fuel:
 ![Fuel Remaining Table](fuel_table.png)
 ![Fuel Remaining Graph](fuel_bar_graph.png)
@@ -123,6 +125,6 @@ Usage: ```python generate_reports.py```
 ![Game Time Table](game_time_table.png)
 ![Game Time Graph](gtime_bar_graph.png)
 
-### Run Time:
+### Run Time (seconds):
 ![Run Time Table](sys_time_table.png)
 ![Run Time Graph](stime_bar_graph.png)
