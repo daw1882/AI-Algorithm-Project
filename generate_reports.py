@@ -122,8 +122,6 @@ def get_tree_stats():
     for i in range(25):
         print("Game #" + str(i) + ": ", end='')
         for j in range(5):
-            if i == 21:
-                continue
             tree = asteroids_tree.Search_Agent(line_args.format(i))
             start = time.time()
             tree_path = tree.run()
@@ -355,9 +353,10 @@ def simple_data():
 
 
 if __name__ == "__main__":
-    one_iteration()
+    #one_iteration()
+    # Uncomment to regenerate the tables
     simple_data()
-    #twenty_iterations()
+    
 
 
 

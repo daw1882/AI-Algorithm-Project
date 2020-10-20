@@ -87,12 +87,12 @@ class Chromosome(object):
                 #print("fail")
                 return how_far #env.ship.fuel + 
             elif env.ship.x > outer.window_width and env.goal == asteroids_exp.Goal.SUCCESS:
-                return  outer.window_width+1001 #env.ship.fuel*20 +
+                return  outer.window_width+1001 + env.ship.fuel*100 
             else:
                 #print("ok")
                 how_far = env.ship.x
             #print(env.ship.fuel)
-        return how_far*10 #env.ship.fuel*10 + 
+        return how_far*10 + env.ship.fuel*10
 
     # Mutate function params:(child) <- mutate child if random probability
     # DO LAST

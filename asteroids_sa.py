@@ -78,15 +78,18 @@ class SA_Agent():
 
             """
             outer.init_env_state()
+            how_far = 0
             for move in self.state:
                 direction = move[0]
                 xv, yv = self.get_move(direction)
                 outer.env_state = asteroids_exp.move(outer.env_state, xv, yv, move[1], outer.window_width, outer.window_height, outer.args, lambda x: asteroids_exp.render(outer.view, x))
                 if outer.env_state.goal == asteroids_exp.Goal.FAIL:
-                    return outer.env_state.ship.x + outer.env_state.ship.fuel
-                if outer.env_state.goal == asteroids_exp.Goal.SUCCESS:
-                    return outer.env_state.ship.x + outer.env_state.ship.fuel - len(self.state) + 10000
-            return outer.env_state.ship.x + outer.env_state.ship.fuel - len(self.state)
+                    return how_far
+                elif outer.env_state.goal == asteroids_exp.Goal.SUCCESS:
+                    return outer.window_width + outer.env_state.ship.fuel - len(self.state) + 10001
+                else:
+                    how_far = outer.env_state.ship.x
+            return how_far + outer.env_state.ship.fuel - len(self.state)
         
         
         def get_move(self, key):
@@ -134,8 +137,8 @@ class SA_Agent():
                 remove_idx = random.randrange(1, len(new_state))
                 new_state.pop(remove_idx)
             else:
-                move_types = ['s','d','e','c','x']
-                make_move = move_types[random.randrange(5)]
+                move_types = ['s','d','e','c']
+                make_move = move_types[random.randrange(4)]
                 time_block = random.randrange(1, outer.window_width)
                 start_idx = random.randint(1, len(new_state)+1)
                 new_state.insert(start_idx, (make_move, time_block))
