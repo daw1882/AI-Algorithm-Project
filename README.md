@@ -38,7 +38,11 @@ place for all moves as long as possible. There may be a way to modify it such th
 overly complex to implement for a single case.
 
 ### Results:
+The genetic algorithm typically outperformed only tree search overall in fuel remaining. It did about the same if not a little worse than simulated annealing. This is not the case for the games that had a small amount of fuel to begin with however.
 
+It performed second best in the game time steps to reach the goal. It barely outperforms simulated annealing except in a few cases, likely because there was a constant number of moves in the move list at any point.
+
+It performed worst overall for run time. Most of the time it takes stems from the fact that no matter what game simulation it is given, it must always run a constant number of loops, or generations, and it must also run a simulation for each loop which takes up a majority of the time spent.
 
 ## Simulated Annealing
 Usage: ```python asteroid_sa[#].py -i asteroid_game_11.json```
@@ -71,7 +75,9 @@ same issues for examples such as these.
 for both but it just depends on the randomization aspect being in its favor.**
 
 ### Results:
+The results for simulated annealing are quite similar to the genetic algorithm. It slightly outperforms the GA in fuel remaining and slightly underperforms in the time steps to solution. The main reason these two algorithms are so similar is that the idea behind them is related, start with some random sample and improve upon it, mixing in random moves every now and then. 
 
+The runtime for this algorithm was also slightly better than GA. This is most likely because the GA had to take more time per iteration since it was creating an entire new generation each time instead of just modifying one moveset.
 
 
 ## Tree Search
@@ -98,6 +104,8 @@ Overall I'd say this was the best option for this task (though it likely wouldn'
 probelm size increases). The reason this performed the best and found a solution consistently was because it exhausted all the options to reach the end goal. 
 Also, by adding a heuristic to the search, it is able to handle most of the larger problems in a reasonable amount of time since it prunes many of the useless
 branches and focuses on the branches most likely to lead to the solution. 
+
+The main issue with the other two algorithms is that the fitness or scoring function needs to account for all the important aspects of the simulation but when there are so many it can be very difficult to include them all. Thus, since the tree search tries everything and focuses on getting to the goal as soon as possible, it outperforms both algorithms for the simulations.
 
 
 
