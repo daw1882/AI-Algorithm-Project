@@ -6,7 +6,18 @@ Dade Wood, daw1882
 Usage: ```python asteroid_ga[#].py -i asteroid_game_11.json```
 
 ### Modifications to base algo:
+Fitness Function (main difference):
+1. For move in chromosome's move list:
+    1. act on the move in the environment
+    1. if env goal state is FAIL, return the ships current x location
+    1. else if the ship has reached the goal (goal state is SUCCESS), return window_width + fuel_remaining*100 + large_constant
+    1. else update how far the ship is from its x location
+1. return ship_x_loc * 10 + fuel_remaining * 10
 
+The multiplication and addition of constants in the fitness scoring is to provide a larger difference between fitness scores as the fitness increases. This is needed because the random selection function uses probabilities of each member being selected and the probabilities are calculated using the total fitness of all population members. This is also the reason for keeping the population so small (10 members). 
+
+The representation of a chromosome (move set) in the genetic algorithm is used as a list of 15 moves that can be sliced and concatenated to do the reproduction and mutations.
+     
 
 ### Difficulties:
 
