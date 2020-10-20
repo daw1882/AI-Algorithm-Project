@@ -14,7 +14,7 @@ Fitness Function (Higher is better):
     1. else update how far the ship is from its x location
 1. return ship_x_loc * 10 + fuel_remaining * 10
 
-The multiplication and addition of constants in the fitness scoring is to provide a larger difference between fitness scores as the fitness increases. This is needed because the random selection function uses probabilities of each member being selected and the probabilities are calculated using the total fitness of all population members. This is also the reason for keeping the population so small (10 members). 
+The multiplication and addition of constants in the fitness scoring is to provide a larger difference between fitness scores as the fitness increases. This is needed because the random selection function uses probabilities of each member being selected and the probabilities are calculated using the total fitness of all population members. This is also the reason for keeping the population so small (10 members), to increase the chance that a better individual is chosen to reproduce. 
 
 The representation of a chromosome (move set) in the genetic algorithm is used as a list of 15 moves that can be sliced and concatenated to do the reproduction and mutations.
      
