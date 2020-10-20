@@ -78,6 +78,18 @@ for both but it just depends on the randomization aspect being in its favor.**
 Usage: ```python asteroid_tree[#].py -i asteroid_game_11.json```
 
 ### Modifications to base algo:
+Expand:
+1. for action in action list (types of moves):
+    1. continue if previous two moves were 's' moves
+    1. if parent's move was different than current move add 1 to fuel cost
+    1. store the distance to the end of the screen
+    1. if window_width less than 20 then set the lower bound equal to 1
+    1. for each time step between 50 and lower bound (default 10) decrementing:
+    1. create move using time step
+    1. if move is going forward, add it to the move_cost
+    1. create new node with move, the current path cost, and the cost to get to the end
+    1. add created node to leaves of the current node
+1. return the leaves list
 
 This tree uses a heuristic approach similar to A*. Instead of a stack, the nodes get stored in a min-heap with the most priority going to the paths that minimize the cost from the space ship's current position to the end of the screen. In order to do this, I just had to track the time steps for whenever the ship was moving and store it in a new node variable path_cost so that it could be used to calculate end_cost which is the distance in a straight line to the end of the screen. As a bonus, end_cost also adds any fuel usage to it in an attempt to lower the amount of total fuel used, but the algorithm still ends at the first solution found, so this does not guarantee the least amount of fuel used every time.
 
